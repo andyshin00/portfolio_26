@@ -1,0 +1,136 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background: #111;
+}
+
+.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+}
+
+.css3d-renderer {
+  pointer-events: none;
+}
+
+body.monitor-focused .css3d-renderer {
+  pointer-events: auto;
+}
+
+/* EMAIL BUTTON STYLE */
+.email-button {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  width: 58px;
+  height: 58px;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.email-button:hover {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 1);
+}
+
+.email-button img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* LOADING AANIMATION */
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  image-rendering: pixelated;
+}
+
+.loading-box {
+  width: 180px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-track {
+  position: relative;
+  width: 150px;
+  height: 16px;
+  border: 3px solid #8a8a8a;
+  background: #050505;
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.loading-track::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border: 1px solid #2a2a2a;
+  pointer-events: none;
+}
+
+.loading-segment {
+  position: absolute;
+  top: 3px;
+  width: 10px;
+  height: 8px;
+  border-radius: 0;
+  background: #3366ff;
+  box-shadow: none;
+}
+
+.segment-1 {
+  left: 0;
+}
+
+.segment-2 {
+  left: 12px;
+}
+
+.segment-3 {
+  left: 24px;
+}
+
+.enter-text {
+  color: white;
+  font-family: monospace;
+  font-size: 16px;
+  letter-spacing: 1px;
+  opacity: 0;
+  cursor: pointer;
+  user-select: none;
+  image-rendering: pixelated;
+}
