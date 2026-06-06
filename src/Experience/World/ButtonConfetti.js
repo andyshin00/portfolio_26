@@ -38,7 +38,7 @@ export default class KeyboardConfetti {
   }
 
   findKeyboard() {
-    this.keyboardMesh = this.room.getObjectByName("button");
+    this.keyboardMesh = this.room.getObjectByName("Button");
 
     if (!this.keyboardMesh) {
       console.warn("KeyboardConfetti: Keyboard object not found");

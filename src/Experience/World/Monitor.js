@@ -76,15 +76,12 @@ export default class Monitor {
   setIframeScreen() {
     this.iframe = document.createElement("iframe");
 
-    this.iframe.src = "https://xp-portfolio-hlfn.vercel.app/";
+    this.iframe.src = "https://xp-portfolio-rho.vercel.app/";
 
     this.iframe.style.width = "1280px";
     this.iframe.style.height = "720px";
     this.iframe.style.border = "0px";
     this.iframe.style.background = "#000";
-
-    this.iframe.style.backfaceVisibility = "hidden";
-    this.iframe.style.webkitBackfaceVisibility = "hidden";
 
     this.cssObject = new CSS3DObject(this.iframe);
 
@@ -100,7 +97,7 @@ export default class Monitor {
 
     this.cssObject.rotateX(-Math.PI / 2);
 
-    this.cssObject.scale.set(0.000535, 0.00068, 0.0005);
+    this.cssObject.scale.set(0.0005, 0.00064, 0.00049);
 
     this.cssScene.add(this.cssObject);
   }

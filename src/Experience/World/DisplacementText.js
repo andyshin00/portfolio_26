@@ -78,15 +78,15 @@ export default class DisplacementText {
 
     this.params = {
       x: 0.53,
-      y: 2.05,
-      z: 1.55,
+      y: 1.85,
+      z: 1.3,
       // x: -2.13,
       // y: 1,
       // z: 0.658,
       rotationX: 0,
       rotationY: -Math.PI / 2,
       rotationZ: 0,
-      scale: 0.45,
+      scale: 0.6,
       // scale: 0.28,
       visible: true,
     };

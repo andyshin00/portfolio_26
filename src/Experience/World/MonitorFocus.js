@@ -22,8 +22,8 @@ export default class MonitorFocus {
     this.defaultTarget = this.controls.target.clone();
 
     // Change these later after testing
-    this.focusCameraPosition = new THREE.Vector3(0.2, 1.4, 0.4);
-    this.focusTarget = new THREE.Vector3(-0.9, 1.7, 0.1);
+    this.focusCameraPosition = new THREE.Vector3(0.2, 1.4, 0.3);
+    this.focusTarget = new THREE.Vector3(-0.9, 1.75, -0.1);
 
     this.setEvents();
   }
