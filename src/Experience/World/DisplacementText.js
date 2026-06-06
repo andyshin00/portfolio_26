@@ -79,7 +79,7 @@ export default class DisplacementText {
     this.params = {
       x: 0.53,
       y: 1.85,
-      z: 1.3,
+      z: 1.5,
       // x: -2.13,
       // y: 1,
       // z: 0.658,

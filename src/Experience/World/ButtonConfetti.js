@@ -70,7 +70,7 @@ export default class KeyboardConfetti {
   }
 
   explode(position) {
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 30; i++) {
       const geometry = new THREE.PlaneGeometry(0.025, 0.012);
 
       const material = new THREE.MeshBasicMaterial({
