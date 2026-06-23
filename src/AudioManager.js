@@ -1,7 +1,7 @@
 import { Howl } from "howler";
 
-import whooshSrc from "./assets/sounds/whoosh.mp3";
-import kkSongSrc from "./assets/sounds/kk.mp3";
+import whooshSrc from "./assets/sounds/whoosh.mp3?url";
+import kkSongSrc from "./assets/sounds/kk.mp3?url";
 
 export const whoosh = new Howl({
   src: [whooshSrc],

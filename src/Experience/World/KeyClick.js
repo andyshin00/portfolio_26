@@ -16,7 +16,7 @@ export default class KeyClick {
     this.room = this.experience.world?.room?.model;
 
     this.raycaster = new THREE.Raycaster();
-    this.pointer = new THREE.Vector2();
+    this.pointer = this.experience.pointer;
 
     this.keys = {
       ctrl: {
@@ -53,15 +53,10 @@ export default class KeyClick {
   }
 
   waitForModel() {
-    const interval = setInterval(() => {
-      if (this.experience.world?.room?.model) {
-        clearInterval(interval);
-
-        this.room = this.experience.world.room.model;
-
-        this.findKeys();
-      }
-    }, 100);
+    window.addEventListener("room-loaded", (event) => {
+      this.room = event.detail?.model || this.experience.world?.room?.model;
+      this.findKeys();
+    }, { once: true });
   }
 
   findKeys() {
@@ -76,11 +71,6 @@ export default class KeyClick {
       keyData.startY = keyData.mesh.position.y;
       this.isAnimating.set(keyData.objectName, false);
     });
-  }
-
-  setPointer(event) {
-    this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
   }
 
   getClickableMeshes() {
@@ -114,9 +104,7 @@ export default class KeyClick {
   }
 
   setEvents() {
-    window.addEventListener("pointermove", (event) => {
-      this.setPointer(event);
-
+    window.addEventListener("pointermove", () => {
       const hoveredKey = this.getHoveredKey();
 
       if (hoveredKey) {
@@ -126,9 +114,7 @@ export default class KeyClick {
       }
     });
 
-    window.addEventListener("pointerdown", (event) => {
-      this.setPointer(event);
-
+    window.addEventListener("pointerdown", () => {
       const keyData = this.getHoveredKey();
 
       if (!keyData) return;

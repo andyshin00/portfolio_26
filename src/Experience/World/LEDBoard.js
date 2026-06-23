@@ -233,10 +233,11 @@ export default class LEDBoard {
   }
 
   update() {
+    if (this._attached) return;
+
     this.findAndAttachMesh();
 
     if (!this._attached) return;
-    if (!this._texture) return;
 
     this._drawFrame();
   }

@@ -2,6 +2,7 @@
 
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 
 import Experience from "../Experience.js";
 
@@ -13,7 +14,11 @@ export default class Room {
 
     this.scene = this.experience.scene;
 
+    const draco = new DRACOLoader();
+    draco.setDecoderPath("/draco/");
+
     this.loader = new GLTFLoader();
+    this.loader.setDRACOLoader(draco);
 
     this.model = null;
     this.isLoaded = false;
@@ -31,14 +36,12 @@ export default class Room {
 
         this.model.traverse((child) => {
           if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
+            child.castShadow = false;
+            child.receiveShadow = false;
           }
         });
 
         this.scene.add(this.model);
-
-        console.log("Room: model loaded:", this.model);
 
         window.dispatchEvent(
           new CustomEvent("room-loaded", {

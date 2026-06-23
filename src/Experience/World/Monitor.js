@@ -23,15 +23,10 @@ export default class Monitor {
   }
 
   waitForModel() {
-    const interval = setInterval(() => {
-      if (this.experience.world?.room?.model) {
-        clearInterval(interval);
-
-        this.room = this.experience.world.room.model;
-
-        this.setScreen();
-      }
-    }, 100);
+    window.addEventListener("room-loaded", (event) => {
+      this.room = event.detail?.model || this.experience.world?.room?.model;
+      this.setScreen();
+    }, { once: true });
   }
 
   setScreen() {

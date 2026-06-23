@@ -5,8 +5,8 @@ const CONFIG = {
   // Shape
   width: 5.5,
   height: 2.4,
-  segmentsX: 180,
-  segmentsY: 90,
+  segmentsX: 120,
+  segmentsY: 60,
 
   // Placement from your latest debug settings
   position: new THREE.Vector3(-1.87, 2.13, 2.87),

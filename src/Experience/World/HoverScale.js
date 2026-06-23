@@ -13,7 +13,6 @@ export default class HoverScale {
     this.roomModel = roomModel;
 
     this.raycaster = new THREE.Raycaster();
-    this.pointer = new THREE.Vector2();
 
     this.hoverScaleMultiplier = 1.5;
     this.ease = 0.12;
@@ -32,15 +31,10 @@ export default class HoverScale {
     this.hoverObjects = [];
     this.hoveredObject = null;
 
-    if (!this.roomModel) {
-      console.warn("HoverScale: no room model was provided.");
-      return;
-    }
+    if (!this.roomModel) return;
 
     this.setObjects();
     this.setEvents();
-
-    console.log("HoverScale: ready.");
   }
 
   setObjects() {
@@ -60,8 +54,6 @@ export default class HoverScale {
       };
 
       this.hoverObjects.push(object);
-
-      console.log("HoverScale: object added:", object.name);
     });
   }
 
@@ -70,15 +62,10 @@ export default class HoverScale {
     this.canvas.addEventListener("pointerleave", this.onPointerLeave);
   }
 
-  onPointerMove = (event) => {
+  onPointerMove = () => {
     if (!this.hoverObjects.length) return;
 
-    const rect = this.canvas.getBoundingClientRect();
-
-    this.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    this.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-    this.raycaster.setFromCamera(this.pointer, this.camera);
+    this.raycaster.setFromCamera(this.experience.pointer, this.camera);
 
     const intersects = this.raycaster.intersectObjects(this.hoverObjects, true);
 
@@ -118,7 +105,6 @@ export default class HoverScale {
 
     if (this.hoveredObject) {
       this.canvas.style.cursor = "pointer";
-      console.log("HoverScale: hovering:", this.hoveredObject.name);
     } else {
       this.canvas.style.cursor = "";
     }
@@ -133,18 +119,24 @@ export default class HoverScale {
       if (!hoverData) return;
 
       const originalScale = hoverData.originalScale;
+      const target = hoverData.targetScale;
 
       if (object === this.hoveredObject) {
-        hoverData.targetScale.set(
+        target.set(
           originalScale.x * this.hoverScaleMultiplier,
           originalScale.y * this.hoverScaleMultiplier,
           originalScale.z * this.hoverScaleMultiplier,
         );
       } else {
-        hoverData.targetScale.copy(originalScale);
+        target.copy(originalScale);
       }
 
-      object.scale.lerp(hoverData.targetScale, this.ease);
+      if (object.scale.distanceToSquared(target) < 1e-8) {
+        object.scale.copy(target);
+        return;
+      }
+
+      object.scale.lerp(target, this.ease);
     });
   }
 

@@ -12,7 +12,7 @@ export default class MonitorFocus {
     this.controls = this.experience.camera.controls;
 
     this.raycaster = new THREE.Raycaster();
-    this.pointer = new THREE.Vector2();
+    this.pointer = this.experience.pointer;
 
     this.isFocused = false;
     this.isAnimating = false;
@@ -34,6 +34,8 @@ export default class MonitorFocus {
       minDistance: this.controls.minDistance,
       maxDistance: this.controls.maxDistance,
     };
+
+    window.addEventListener("room-loaded", () => this.findMonitorMesh(), { once: true });
 
     this.setEvents();
   }
@@ -58,11 +60,6 @@ export default class MonitorFocus {
     }
   }
 
-  setPointer(event) {
-    this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
-  }
-
   isHoveringMonitor() {
     if (!this.monitorMeshes || this.monitorMeshes.length === 0) return false;
 
@@ -77,13 +74,7 @@ export default class MonitorFocus {
   }
 
   setEvents() {
-    window.addEventListener("pointermove", (event) => {
-      this.setPointer(event);
-
-      if (!this.monitorMeshes || this.monitorMeshes.length === 0) {
-        this.findMonitorMesh();
-      }
-
+    window.addEventListener("pointermove", () => {
       if (this.isFocused || this.isAnimating) {
         document.body.style.cursor = "default";
         return;
@@ -94,13 +85,7 @@ export default class MonitorFocus {
         : "default";
     });
 
-    window.addEventListener("pointerdown", (event) => {
-      this.setPointer(event);
-
-      if (!this.monitorMeshes || this.monitorMeshes.length === 0) {
-        this.findMonitorMesh();
-      }
-
+    window.addEventListener("pointerdown", () => {
       if (this.isAnimating) return;
 
       if (!this.isFocused) {

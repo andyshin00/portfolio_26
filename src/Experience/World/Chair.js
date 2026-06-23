@@ -16,13 +16,10 @@ export default class Chair {
   }
 
   waitForModel() {
-    const interval = setInterval(() => {
-      if (this.experience.world?.room?.model) {
-        clearInterval(interval);
-        this.room = this.experience.world.room.model;
-        this.setChair();
-      }
-    }, 100);
+    window.addEventListener("room-loaded", (event) => {
+      this.room = event.detail?.model || this.experience.world?.room?.model;
+      this.setChair();
+    }, { once: true });
   }
 
   setChair() {

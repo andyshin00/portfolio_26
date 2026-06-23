@@ -1,4 +1,5 @@
 import { kkSong } from "./AudioManager.js";
+import kkCoverUrl from "./assets/icons/kk.jpg?url";
 
 export default class MusicPlayer {
   constructor() {
@@ -47,7 +48,7 @@ K.K. Cruisin'</span>
           <button class="mp-btn mp-play-btn" id="mp-play" type="button">${this.icons.play}</button>
           <button class="mp-btn" id="mp-next" type="button">${this.icons.skipForward}</button>
           <button class="mp-btn" id="mp-mute" type="button">${this.icons.volume}</button>
-          <input type="range" class="mp-vol-slider" id="mp-vol" min="0" max="1" step="0.01" value="0.1">
+          <input type="range" class="mp-vol-slider" id="mp-vol" min="0" max="1" step="0.01" value="0.3">
         </div>
       </div>
 
@@ -66,6 +67,11 @@ K.K. Cruisin'</span>
     `;
 
     document.body.appendChild(this.element);
+
+    const thumb = this.element.querySelector("#mp-thumb-btn");
+    thumb.style.backgroundImage = `url(${kkCoverUrl})`;
+    thumb.style.backgroundSize = "cover";
+    thumb.style.backgroundPosition = "center";
   }
 
   setElements() {

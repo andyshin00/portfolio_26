@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import Experience from "../Experience.js";
-import backgroundUrl from "../../assets/textures/background.jpg?url";
+import backgroundUrl from "../../assets/textures/background.webp";
 
 const CONFIG = {
   // Centred on the room — the arc wraps around the left wall from here

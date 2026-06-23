@@ -21,7 +21,6 @@ export default class Renderer {
     this.instance = new THREE.WebGLRenderer({
       canvas: this.canvas,
       antialias: true,
-      alpha: true,
     });
 
     this.instance.setSize(this.sizes.width, this.sizes.height);
@@ -30,9 +29,7 @@ export default class Renderer {
 
     this.instance.outputColorSpace = THREE.SRGBColorSpace;
 
-    this.instance.shadowMap.enabled = true;
-
-    this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.instance.shadowMap.enabled = false;
   }
 
   setCSSRenderer() {

@@ -19,6 +19,7 @@ export default class Experience {
     this.canvas = canvas;
     this.scene = new THREE.Scene();
     this.cssScene = new THREE.Scene();
+    this.pointer = new THREE.Vector2();
 
     this.sizes = new Sizes();
     this.time = new Time();
@@ -35,6 +36,13 @@ export default class Experience {
     this.time.on("tick", () => {
       this.update();
     });
+
+    // Capture phase so pointer is fresh before any element handler reads it
+    window.addEventListener("pointermove", (event) => {
+      const rect = this.canvas.getBoundingClientRect();
+      this.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      this.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    }, { capture: true });
   }
 
   resize() {
