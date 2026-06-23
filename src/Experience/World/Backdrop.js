@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import Experience from "../Experience.js";
+import backgroundUrl from "../../assets/textures/background.jpg?url";
 
 const CONFIG = {
   // Centred on the room — the arc wraps around the left wall from here
@@ -26,7 +27,7 @@ const CONFIG = {
   // thetaStart = Math.PI * 0.5  centres the arc facing the left wall (-X).
   thetaStart: Math.PI * 1.0,
 
-  texturePath: "/src/assets/textures/background.jpg",
+  texturePath: backgroundUrl,
   repeatX: 1.0,
   repeatY: 1.0,
 
