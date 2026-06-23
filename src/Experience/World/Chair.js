@@ -26,7 +26,7 @@ export default class Chair {
   }
 
   setChair() {
-    this.chairSeat = this.room.getObjectByName("Chair_Seat");
+    this.chairSeat = this.room.getObjectByName("chair_Baked");
 
     if (!this.chairSeat) {
       console.error("Chair_Seat not found");

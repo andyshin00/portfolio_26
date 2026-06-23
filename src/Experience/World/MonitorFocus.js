@@ -16,35 +16,88 @@ export default class MonitorFocus {
 
     this.isFocused = false;
     this.isAnimating = false;
-    this.monitorMesh = null;
+
+    this.monitorMeshes = [];
 
     this.defaultCameraPosition = this.camera.position.clone();
     this.defaultTarget = this.controls.target.clone();
 
-    // Change these later after testing
-    this.focusCameraPosition = new THREE.Vector3(0.2, 1.4, 0.3);
-    this.focusTarget = new THREE.Vector3(-0.9, 1.75, -0.1);
+    // Move the camera closer to the monitor to increase the zoom-in effect.
+    this.focusCameraPosition = new THREE.Vector3(-0.9, 1.7, 1);
+    this.focusTarget = new THREE.Vector3(-0.9, 1.7, -0.05);
+
+    this.defaultControlLimits = {
+      minPolarAngle: this.controls.minPolarAngle,
+      maxPolarAngle: this.controls.maxPolarAngle,
+      minAzimuthAngle: this.controls.minAzimuthAngle,
+      maxAzimuthAngle: this.controls.maxAzimuthAngle,
+      minDistance: this.controls.minDistance,
+      maxDistance: this.controls.maxDistance,
+    };
 
     this.setEvents();
   }
 
   findMonitorMesh() {
-    if (!this.experience.world.room.model) return;
+    const room = this.experience.world?.room?.model;
+    if (!room) return;
 
-    this.monitorMesh =
-      this.experience.world.room.model.getObjectByName("Computer");
+    const computer = room.getObjectByName("Computer_Baked");
+    const comp2 = room.getObjectByName("comp2_Baked");
 
-    if (!this.monitorMesh) {
-      console.warn("MonitorFocus: Object_12 not found");
+    this.monitorMeshes = [computer, comp2].filter(Boolean);
+
+    if (this.monitorMeshes.length === 0) {
+      console.warn("MonitorFocus: Computer_Baked / comp2_Baked not found");
+
+      room.traverse((child) => {
+        if (child.isMesh) {
+          console.log(child.name);
+        }
+      });
     }
   }
 
-  setEvents() {
-    window.addEventListener("pointerdown", (event) => {
-      this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-      this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  setPointer(event) {
+    this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  }
 
-      if (!this.monitorMesh) {
+  isHoveringMonitor() {
+    if (!this.monitorMeshes || this.monitorMeshes.length === 0) return false;
+
+    this.raycaster.setFromCamera(this.pointer, this.camera);
+
+    const intersects = this.raycaster.intersectObjects(
+      this.monitorMeshes,
+      true,
+    );
+
+    return intersects.length > 0;
+  }
+
+  setEvents() {
+    window.addEventListener("pointermove", (event) => {
+      this.setPointer(event);
+
+      if (!this.monitorMeshes || this.monitorMeshes.length === 0) {
+        this.findMonitorMesh();
+      }
+
+      if (this.isFocused || this.isAnimating) {
+        document.body.style.cursor = "default";
+        return;
+      }
+
+      document.body.style.cursor = this.isHoveringMonitor()
+        ? "pointer"
+        : "default";
+    });
+
+    window.addEventListener("pointerdown", (event) => {
+      this.setPointer(event);
+
+      if (!this.monitorMeshes || this.monitorMeshes.length === 0) {
         this.findMonitorMesh();
       }
 
@@ -58,44 +111,93 @@ export default class MonitorFocus {
     });
 
     window.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && this.isFocused) {
+      if (event.key === "Escape" && this.isFocused && !this.isAnimating) {
         this.exitFocus();
       }
     });
   }
 
   checkMonitorClick() {
-    if (!this.monitorMesh) return;
-
-    this.raycaster.setFromCamera(this.pointer, this.camera);
-
-    const intersects = this.raycaster.intersectObject(this.monitorMesh, true);
-
-    if (intersects.length > 0) {
+    if (this.isHoveringMonitor()) {
+      document.body.style.cursor = "default";
       this.enterFocus();
     }
   }
 
   checkExitClick() {
-    this.raycaster.setFromCamera(this.pointer, this.camera);
-
-    const intersects = this.raycaster.intersectObject(this.monitorMesh, true);
-
-    if (intersects.length === 0) {
+    if (!this.isHoveringMonitor()) {
       this.exitFocus();
     }
+  }
+
+  hideHeroText() {
+    const heroText = document.querySelector(".hero-text");
+
+    if (!heroText) return;
+
+    gsap.to(heroText, {
+      opacity: 0,
+      y: 20,
+      duration: 0.55,
+      ease: "power2.out",
+      pointerEvents: "none",
+    });
+  }
+
+  showHeroText() {
+    const heroText = document.querySelector(".hero-text");
+
+    if (!heroText) return;
+
+    gsap.to(heroText, {
+      opacity: 1,
+      y: 0,
+      duration: 0.65,
+      ease: "power2.out",
+      pointerEvents: "none",
+    });
+  }
+
+  disableControlLimits() {
+    this.controls.minPolarAngle = 0;
+    this.controls.maxPolarAngle = Math.PI;
+
+    this.controls.minAzimuthAngle = -Infinity;
+    this.controls.maxAzimuthAngle = Infinity;
+
+    this.controls.minDistance = 0;
+    this.controls.maxDistance = Infinity;
+  }
+
+  restoreControlLimits() {
+    this.controls.minPolarAngle = this.defaultControlLimits.minPolarAngle;
+    this.controls.maxPolarAngle = this.defaultControlLimits.maxPolarAngle;
+
+    this.controls.minAzimuthAngle = this.defaultControlLimits.minAzimuthAngle;
+    this.controls.maxAzimuthAngle = this.defaultControlLimits.maxAzimuthAngle;
+
+    this.controls.minDistance = this.defaultControlLimits.minDistance;
+    this.controls.maxDistance = this.defaultControlLimits.maxDistance;
   }
 
   enterFocus() {
     this.isFocused = true;
     this.isAnimating = true;
 
+    document.body.style.cursor = "default";
+
+    this.hideHeroText();
+
     this.defaultCameraPosition.copy(this.camera.position);
     this.defaultTarget.copy(this.controls.target);
 
     this.controls.enabled = false;
+    this.disableControlLimits();
 
     whoosh.play();
+
+    gsap.killTweensOf(this.camera.position);
+    gsap.killTweensOf(this.controls.target);
 
     gsap.to(this.camera.position, {
       x: this.focusCameraPosition.x,
@@ -112,9 +214,11 @@ export default class MonitorFocus {
       duration: 1.2,
       ease: "power3.inOut",
       onUpdate: () => {
-        this.controls.update();
+        this.camera.lookAt(this.controls.target);
       },
       onComplete: () => {
+        this.camera.lookAt(this.controls.target);
+
         this.isAnimating = false;
 
         document.body.classList.add("monitor-focused");
@@ -130,6 +234,8 @@ export default class MonitorFocus {
     this.isFocused = false;
     this.isAnimating = true;
 
+    document.body.style.cursor = "default";
+
     whoosh.play();
 
     document.body.classList.remove("monitor-focused");
@@ -137,6 +243,9 @@ export default class MonitorFocus {
     if (this.experience.world.monitor) {
       this.experience.world.monitor.hideIframe();
     }
+
+    gsap.killTweensOf(this.camera.position);
+    gsap.killTweensOf(this.controls.target);
 
     gsap.to(this.camera.position, {
       x: this.defaultCameraPosition.x,
@@ -153,11 +262,17 @@ export default class MonitorFocus {
       duration: 1.2,
       ease: "power3.inOut",
       onUpdate: () => {
-        this.controls.update();
+        this.camera.lookAt(this.controls.target);
       },
       onComplete: () => {
+        this.restoreControlLimits();
+
         this.controls.enabled = true;
+        this.controls.update();
+
         this.isAnimating = false;
+
+        this.showHeroText();
       },
     });
   }

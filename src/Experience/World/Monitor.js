@@ -35,29 +35,35 @@ export default class Monitor {
   }
 
   setScreen() {
-    this.screenMesh = this.room.getObjectByName("Object_9");
+    this.screenMesh = this.room.getObjectByName("Object_9_Baked");
 
     if (!this.screenMesh) {
-      console.warn("Monitor: Object_9 screen mesh not found");
+      console.warn("Monitor: Object_9_Baked screen mesh not found");
       return;
     }
 
     this.setIframeScreen();
-    this.hideIframe();
+
+    // Hide the Blender screen mesh permanently.
+    // The iframe will now be visible all the time.
+    this.screenMesh.visible = false;
+    this.cssObject.visible = true;
+    this.iframe.style.display = "block";
   }
 
   setIframeScreen() {
     this.iframe = document.createElement("iframe");
 
-    this.iframe.src = "https://xp-portfolio-rho.vercel.app/";
-
+    this.iframe.src = "https://andrew-os-two.vercel.app/";
     this.iframe.style.width = "1280px";
     this.iframe.style.height = "720px";
     this.iframe.style.border = "0px";
     this.iframe.style.background = "#000";
+    this.iframe.style.display = "block";
 
-    this.iframe.style.backfaceVisibility = "hidden";
-    this.iframe.style.webkitBackfaceVisibility = "hidden";
+    // Keep pointer events off by default so OrbitControls still work.
+    // Your MonitorFocus/body.monitor-focused CSS can enable interaction when zoomed in.
+    this.iframe.style.pointerEvents = "none";
 
     this.cssObject = new CSS3DObject(this.iframe);
 
@@ -71,7 +77,7 @@ export default class Monitor {
       this.screenMesh.getWorldQuaternion(new THREE.Quaternion()),
     );
 
-    this.cssObject.scale.set(0.0005, 0.00064, 0.00049);
+    this.cssObject.scale.set(0.000619, 0.00072, 0.00049);
 
     this.cssScene.add(this.cssObject);
   }
@@ -79,10 +85,8 @@ export default class Monitor {
   showIframe() {
     if (!this.cssObject || !this.iframe || !this.screenMesh) return;
 
-    // Hide baked screen mesh
     this.screenMesh.visible = false;
 
-    // Show iframe
     this.cssObject.visible = true;
     this.iframe.style.display = "block";
     this.iframe.style.pointerEvents = "auto";
@@ -91,12 +95,12 @@ export default class Monitor {
   hideIframe() {
     if (!this.cssObject || !this.iframe || !this.screenMesh) return;
 
-    // Show baked screen mesh
-    this.screenMesh.visible = true;
+    // Do not hide the iframe anymore.
+    // This keeps the website visible even after exiting monitor focus.
+    this.screenMesh.visible = false;
 
-    // Hide iframe
-    this.cssObject.visible = false;
-    this.iframe.style.display = "none";
+    this.cssObject.visible = true;
+    this.iframe.style.display = "block";
     this.iframe.style.pointerEvents = "none";
   }
 

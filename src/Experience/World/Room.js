@@ -1,5 +1,6 @@
-import * as THREE from "three";
+// src/Experience/World/Room.js
 
+import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 import Experience from "../Experience.js";
@@ -14,6 +15,9 @@ export default class Room {
 
     this.loader = new GLTFLoader();
 
+    this.model = null;
+    this.isLoaded = false;
+
     this.loadModel();
   }
 
@@ -23,22 +27,35 @@ export default class Room {
 
       (gltf) => {
         this.model = gltf.scene;
+        this.isLoaded = true;
 
         this.model.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             child.castShadow = true;
-
             child.receiveShadow = true;
           }
         });
 
         this.scene.add(this.model);
 
-        window.dispatchEvent(new Event("room-loaded"));
+        console.log("Room: model loaded:", this.model);
+
+        window.dispatchEvent(
+          new CustomEvent("room-loaded", {
+            detail: {
+              model: this.model,
+            },
+          }),
+        );
       },
 
       (progress) => {
-        console.log("Loading:", (progress.loaded / progress.total) * 100 + "%");
+        if (progress.total > 0) {
+          console.log(
+            "Loading:",
+            (progress.loaded / progress.total) * 100 + "%",
+          );
+        }
       },
 
       (error) => {

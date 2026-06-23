@@ -56,8 +56,23 @@ export default class Renderer {
   }
 
   update() {
-    this.instance.render(this.scene, this.camera.instance);
+    // CSS3DRenderer only updates the camera's matrixWorld itself when the
+    // camera has no parent. Our camera is added to `scene`, so without this
+    // explicit call CSS3DRenderer reads a stale (previous frame's) camera
+    // matrix while WebGLRenderer always gets the fresh one via
+    // scene.updateMatrixWorld() - causing the CSS3D object to lag one frame
+    // behind and "wobble" relative to the 3D scene while orbiting.
+    this.camera.instance.updateMatrixWorld();
 
     this.cssRenderer.render(this.experience.cssScene, this.camera.instance);
+
+    if (this.experience.world?.godRays) {
+      return;
+    }
+
+    this.instance.render(
+      this.experience.scene,
+      this.experience.camera.instance,
+    );
   }
 }
