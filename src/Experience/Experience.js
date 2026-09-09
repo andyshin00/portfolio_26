@@ -37,12 +37,18 @@ export default class Experience {
       this.update();
     });
 
-    // Capture phase so pointer is fresh before any element handler reads it
-    window.addEventListener("pointermove", (event) => {
+    // Capture phase so pointer is fresh before any element handler reads it.
+    // Also update on pointerdown so a first click with no prior mouse move
+    // (e.g. touch, or the cursor already resting over the target) still
+    // raycasts against the real position instead of a stale (0, 0).
+    const updatePointer = (event) => {
       const rect = this.canvas.getBoundingClientRect();
       this.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       this.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    }, { capture: true });
+    };
+
+    window.addEventListener("pointermove", updatePointer, { capture: true });
+    window.addEventListener("pointerdown", updatePointer, { capture: true });
   }
 
   resize() {

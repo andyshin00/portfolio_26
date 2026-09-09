@@ -56,11 +56,15 @@ export default class Monitor {
     this.iframe.style.background = "#000";
     this.iframe.style.display = "block";
 
-    // Keep pointer events off by default so OrbitControls still work.
-    // Your MonitorFocus/body.monitor-focused CSS can enable interaction when zoomed in.
-    this.iframe.style.pointerEvents = "none";
-
     this.cssObject = new CSS3DObject(this.iframe);
+
+    // Keep pointer events off by default so OrbitControls still work and so the
+    // iframe doesn't swallow the click that should focus the monitor.
+    // NOTE: this must run AFTER `new CSS3DObject(...)` - its constructor forces
+    // `element.style.pointerEvents = "auto"`, which otherwise leaves the iframe
+    // capturing clicks until the first focus/exit cycle calls hideIframe().
+    // showIframe()/body.monitor-focused re-enable interaction when zoomed in.
+    this.iframe.style.pointerEvents = "none";
 
     this.screenMesh.updateWorldMatrix(true, false);
 
