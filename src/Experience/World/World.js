@@ -11,6 +11,7 @@ import Backdrop from "./Backdrop.js";
 import Silk from "./Silk.js";
 import KeyClick from "./KeyClick.js";
 import HoverScale from "./HoverScale.js";
+import MusicPlayerTrigger from "./MusicPlayerTrigger.js";
 
 export default class World {
   constructor() {
@@ -25,6 +26,7 @@ export default class World {
     this.silk = null;
     this.keyClick = null;
     this.hoverScale = null;
+    this.musicPlayerTrigger = null;
 
     window.addEventListener("room-loaded", this.onRoomLoaded);
 
@@ -36,6 +38,7 @@ export default class World {
     this.ledBoard = new LEDBoard();
     this.silk = new Silk();
     this.keyClick = new KeyClick();
+    this.musicPlayerTrigger = new MusicPlayerTrigger();
   }
 
   onRoomLoaded = (event) => {
@@ -63,5 +66,6 @@ export default class World {
     if (this.keyClick) this.keyClick.update();
     if (this.coffeeSteam) this.coffeeSteam.update();
     if (this.hoverScale) this.hoverScale.update();
+    if (this.musicPlayerTrigger) this.musicPlayerTrigger.update();
   }
 }

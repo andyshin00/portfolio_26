@@ -146,5 +146,9 @@ window.addEventListener("room-loaded", () => {
 });
 
 // App start
-new MusicPlayer();
-new Experience(canvas);
+const musicPlayer = new MusicPlayer();
+const experience = new Experience(canvas);
+
+// Exposed so MusicPlayerTrigger (World/MusicPlayerTrigger.js) can toggle the
+// panel when the "Text" object in the GLB is clicked.
+experience.musicPlayer = musicPlayer;

@@ -1,3 +1,5 @@
+import gsap from "gsap";
+
 import { kkSong } from "./AudioManager.js";
 import kkCoverUrl from "./assets/icons/kk.jpg?url";
 
@@ -8,6 +10,8 @@ export default class MusicPlayer {
     this.isPlaying = false;
     this.isMuted = false;
     this.volume = 0.3;
+
+    this.isOpen = false;
 
     this.duration = 0;
     this.raf = null;
@@ -72,6 +76,11 @@ K.K. Cruisin'</span>
     thumb.style.backgroundImage = `url(${kkCoverUrl})`;
     thumb.style.backgroundSize = "cover";
     thumb.style.backgroundPosition = "center";
+
+    // Start tucked away below the viewport (matching its own fixed
+    // bottom/right position), ready to pop up when opened.
+    this.element.style.pointerEvents = "none";
+    gsap.set(this.element, { yPercent: 140, opacity: 0 });
   }
 
   setElements() {
@@ -143,6 +152,48 @@ K.K. Cruisin'</span>
       this.pause();
     } else {
       this.play();
+    }
+  }
+
+  open() {
+    if (this.isOpen) return;
+
+    this.isOpen = true;
+    this.element.style.pointerEvents = "auto";
+
+    gsap.killTweensOf(this.element);
+
+    gsap.to(this.element, {
+      yPercent: 0,
+      opacity: 1,
+      duration: 0.65,
+      ease: "back.out(1.7)",
+    });
+  }
+
+  close() {
+    if (!this.isOpen) return;
+
+    this.isOpen = false;
+
+    gsap.killTweensOf(this.element);
+
+    gsap.to(this.element, {
+      yPercent: 140,
+      opacity: 0,
+      duration: 0.5,
+      ease: "power3.in",
+      onComplete: () => {
+        this.element.style.pointerEvents = "none";
+      },
+    });
+  }
+
+  togglePanel() {
+    if (this.isOpen) {
+      this.close();
+    } else {
+      this.open();
     }
   }
 
