@@ -44,12 +44,12 @@ export default class MusicPlayerTrigger {
 
   setEvents() {
     window.addEventListener("pointermove", () => {
-      // Don't fight MonitorFocus's cursor while zoomed into the monitor.
-      if (this.experience.world?.monitorFocus?.isFocused) return;
+      if (this.experience.world?.monitorFocus?.isFocused) {
+        this.experience.setCursorHover("musicText", false);
+        return;
+      }
 
-      document.body.style.cursor = this.isHoveringText()
-        ? "pointer"
-        : "default";
+      this.experience.setCursorHover("musicText", this.isHoveringText());
     });
 
     window.addEventListener("pointerdown", () => {

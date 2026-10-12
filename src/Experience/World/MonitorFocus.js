@@ -76,13 +76,11 @@ export default class MonitorFocus {
   setEvents() {
     window.addEventListener("pointermove", () => {
       if (this.isFocused || this.isAnimating) {
-        document.body.style.cursor = "default";
+        this.experience.setCursorHover("monitor", false);
         return;
       }
 
-      document.body.style.cursor = this.isHoveringMonitor()
-        ? "pointer"
-        : "default";
+      this.experience.setCursorHover("monitor", this.isHoveringMonitor());
     });
 
     window.addEventListener("pointerdown", () => {
@@ -104,7 +102,7 @@ export default class MonitorFocus {
 
   checkMonitorClick() {
     if (this.isHoveringMonitor()) {
-      document.body.style.cursor = "default";
+      this.experience.setCursorHover("monitor", false);
       this.enterFocus();
     }
   }
@@ -169,7 +167,7 @@ export default class MonitorFocus {
     this.isFocused = true;
     this.isAnimating = true;
 
-    document.body.style.cursor = "default";
+    this.experience.setCursorHover("monitor", false);
 
     this.hideHeroText();
 
@@ -219,7 +217,7 @@ export default class MonitorFocus {
     this.isFocused = false;
     this.isAnimating = true;
 
-    document.body.style.cursor = "default";
+    this.experience.setCursorHover("monitor", false);
 
     whoosh.play();
 

@@ -21,6 +21,15 @@ export default class Experience {
     this.cssScene = new THREE.Scene();
     this.pointer = new THREE.Vector2();
 
+    // Multiple modules (MonitorFocus, MusicPlayerTrigger, ...) each want to
+    // show a pointer cursor while hovering their own clickable object, all on
+    // the same `document.body.style.cursor`. If each just wrote "pointer" or
+    // "default" directly, whichever module's pointermove listener happened
+    // to run last on a given frame would clobber the others' result. Instead
+    // each reports its own hover state under a unique id, and the cursor is
+    // "pointer" whenever any id is currently hovering.
+    this._cursorHoverSources = new Set();
+
     this.sizes = new Sizes();
     this.time = new Time();
     this.debug = new Debug();
@@ -49,6 +58,22 @@ export default class Experience {
 
     window.addEventListener("pointermove", updatePointer, { capture: true });
     window.addEventListener("pointerdown", updatePointer, { capture: true });
+  }
+
+  // See the `_cursorHoverSources` comment above. Call with `isHovering: true`
+  // while a module's own raycast is hovering its clickable object, and
+  // `false` once it isn't (including when that module becomes irrelevant,
+  // e.g. the monitor is already focused) - every call recomputes the cursor
+  // from the full set of currently-hovering sources.
+  setCursorHover(sourceId, isHovering) {
+    if (isHovering) {
+      this._cursorHoverSources.add(sourceId);
+    } else {
+      this._cursorHoverSources.delete(sourceId);
+    }
+
+    document.body.style.cursor =
+      this._cursorHoverSources.size > 0 ? "pointer" : "default";
   }
 
   resize() {
